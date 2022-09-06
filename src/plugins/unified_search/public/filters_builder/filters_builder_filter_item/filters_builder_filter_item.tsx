@@ -6,7 +6,7 @@
  * Side Public License, v 1.
  */
 
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import {
   EuiButtonIcon,
   EuiDraggable,
@@ -16,6 +16,7 @@ import {
   EuiFormRow,
   EuiIcon,
   EuiPanel,
+  useEuiTheme,
 } from '@elastic/eui';
 import { buildEmptyFilter, FieldFilter, Filter, getFilterParams } from '@kbn/es-query';
 import { DataViewField } from '@kbn/data-views-plugin/common';
@@ -55,11 +56,6 @@ const cursorOr = css`
   cursor: url(${or}), auto;
 `;
 
-const indent = css`
-  margin-left: 6px;
-  margin-right: 6px;
-`;
-
 export function FilterItem({
   filter,
   path,
@@ -78,6 +74,15 @@ export function FilterItem({
     globalParams: { hideOr },
   } = useContext(FiltersBuilderContextType);
   const conditionalOperationType = getConditionalOperationType(filter);
+  const { euiTheme } = useEuiTheme();
+
+  const indentStyles = useMemo(
+    () => css`
+      margin-left: ${euiTheme.size.xs};
+      margin-right: ${euiTheme.size.xxs};
+    `,
+    [euiTheme.size.xs, euiTheme.size.xxs]
+  );
 
   let field: DataViewField | undefined;
   let operator: Operator | undefined;
@@ -187,7 +192,7 @@ export function FilterItem({
           >
             {(provided) => (
               <EuiFlexGroup
-                gutterSize="m"
+                gutterSize="s"
                 responsive={false}
                 alignItems="center"
                 justifyContent="center"
@@ -196,16 +201,16 @@ export function FilterItem({
                 <EuiFlexItem>
                   <EuiPanel color={color} paddingSize={'none'} hasShadow={false}>
                     <EuiFlexGroup
-                      gutterSize="m"
+                      gutterSize="s"
                       responsive={false}
                       alignItems="center"
                       justifyContent="center"
                     >
                       <EuiFlexItem grow={false} {...provided.dragHandleProps}>
-                        <EuiIcon type="grab" size="s" className={indent} />
+                        <EuiIcon type="grab" size="s" className={indentStyles} />
                       </EuiFlexItem>
                       <EuiFlexItem grow={10}>
-                        <EuiFlexGroup gutterSize="m" alignItems="center" justifyContent="center">
+                        <EuiFlexGroup gutterSize="s" alignItems="center" justifyContent="center">
                           <EuiFlexItem grow={4}>
                             <EuiFormRow fullWidth>
                               <FieldInput
