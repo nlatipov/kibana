@@ -49,6 +49,12 @@ function FiltersBuilder({
 
       .filter-builder__item {
         padding: 0 ${euiPaddingSize};
+        &:last-child {
+          padding-bottom: 0;
+        }
+        &:first-child {
+          padding-bottom: 0;
+        }
       }
     `,
     [euiPaddingSize]

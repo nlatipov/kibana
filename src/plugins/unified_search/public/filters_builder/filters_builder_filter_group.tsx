@@ -18,7 +18,7 @@ import {
   useEuiPaddingSize,
 } from '@elastic/eui';
 import { Filter } from '@kbn/es-query';
-import { css } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import type { Path } from './filters_builder_types';
 import { ConditionTypes, getConditionalOperationType } from '../utils';
 import { FilterItem } from './filters_builder_filter_item';
@@ -108,7 +108,7 @@ export const FilterGroup = ({
 
   const renderedFilters = filters.map((filter, index, acc) => (
     <>
-      <EuiFlexGroup direction="column" gutterSize="none">
+      <EuiFlexGroup direction="column" gutterSize="xs">
         <EuiFlexItem>
           <FilterItem
             filter={filter}
@@ -143,7 +143,9 @@ export const FilterGroup = ({
       hasShadow={false}
       paddingSize="none"
       hasBorder
-      className="filter-builder__panel"
+      className={cx({
+        'filter-builder__panel': renderedLevel > 0,
+      })}
     >
       {renderedFilters}
     </EuiPanel>

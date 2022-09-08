@@ -175,16 +175,14 @@ export function FilterItem({
       })}
     >
       {conditionalOperationType ? (
-        <div>
-          <FilterGroup
-            path={path}
-            conditionType={conditionalOperationType}
-            filters={Array.isArray(filter) ? filter : filter.meta?.params}
-            timeRangeForSuggestionsOverride={timeRangeForSuggestionsOverride}
-            reverseBackground={!reverseBackground}
-            renderedLevel={renderedLevel + 1}
-          />
-        </div>
+        <FilterGroup
+          path={path}
+          conditionType={conditionalOperationType}
+          filters={Array.isArray(filter) ? filter : filter.meta?.params}
+          timeRangeForSuggestionsOverride={timeRangeForSuggestionsOverride}
+          reverseBackground={!reverseBackground}
+          renderedLevel={renderedLevel + 1}
+        />
       ) : (
         <EuiDroppable
           droppableId={path}
@@ -213,12 +211,7 @@ export function FilterItem({
               >
                 <EuiFlexItem>
                   <EuiPanel color={color} paddingSize={'none'} hasShadow={false}>
-                    <EuiFlexGroup
-                      gutterSize="s"
-                      responsive={false}
-                      alignItems="center"
-                      justifyContent="center"
-                    >
+                    <EuiFlexGroup responsive={false} alignItems="center" justifyContent="center">
                       <EuiFlexItem grow={false} {...provided.dragHandleProps}>
                         <EuiIcon type="grab" size="s" className={grabIconStyles} />
                       </EuiFlexItem>
