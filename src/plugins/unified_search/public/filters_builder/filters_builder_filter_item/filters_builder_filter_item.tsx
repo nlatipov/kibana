@@ -29,42 +29,34 @@ import or from '../assets/or.svg';
 import { FieldInput } from './filters_builder_filter_item_field_input';
 import { OperatorInput } from './filters_builder_filter_item_operator_input';
 import { ParamsEditor } from './filters_builder_filter_item_params_editor';
-import { ConditionTypes, getConditionalOperationType, isOrFilter } from '../../utils';
+import { ConditionTypes, getConditionalOperationType } from '../../utils';
 import { FiltersBuilderContextType } from '../filters_builder_context';
 import { FilterGroup } from '../filters_builder_filter_group';
 import type { Path } from '../filters_builder_types';
 import { getFieldFromFilter, getOperatorFromFilter } from '../../filter_bar/filter_editor';
 import { Operator } from '../../filter_bar/filter_editor';
-import { getPathInArray } from '../filters_builder_utils';
 
 export interface FilterItemProps {
   path: Path;
   filter: Filter;
   timeRangeForSuggestionsOverride?: boolean;
-  reverseBackground?: boolean;
   disableOr: boolean;
   disableAnd: boolean;
   disableRemove: boolean;
   color: 'plain' | 'subdued';
   index: number;
-  isParrentOrFilter?: boolean;
-  isRootLevel?: boolean;
+
+  /** @internal used for recursive rendering **/
+  renderedLevel: number;
+  reverseBackground: boolean;
 }
 
-const cursorAdd = css`
+const cursorAddStyles = css`
   cursor: url(${add}), auto;
 `;
 
-const cursorOr = css`
+const cursorOrStyles = css`
   cursor: url(${or}), auto;
-`;
-
-const borderPadding = css`
-  padding: 0px 14px;
-`;
-
-const borderMargin = css`
-  margin: 0px 16px;
 `;
 
 export function FilterItem({
@@ -77,8 +69,7 @@ export function FilterItem({
   disableRemove,
   color,
   index,
-  isParrentOrFilter,
-  isRootLevel,
+  renderedLevel,
 }: FilterItemProps) {
   const {
     dispatch,
@@ -87,10 +78,9 @@ export function FilterItem({
     globalParams: { hideOr },
   } = useContext(FiltersBuilderContextType);
   const conditionalOperationType = getConditionalOperationType(filter);
-  const pathInArray = getPathInArray(path);
   const { euiTheme } = useEuiTheme();
 
-  const indentStyles = useMemo(
+  const grabIconStyles = useMemo(
     () => css`
       margin-left: ${euiTheme.size.xs};
       margin-right: ${euiTheme.size.xxs};
@@ -179,162 +169,158 @@ export function FilterItem({
   }
 
   return (
-    <>
+    <div
+      className={cx({
+        'filter-builder__item': renderedLevel > 0,
+      })}
+    >
       {conditionalOperationType ? (
-        <div
-          className={cx({
-            [borderMargin]: pathInArray.length === 2 && isParrentOrFilter ? false : !isRootLevel,
-          })}
-        >
+        <div>
           <FilterGroup
             path={path}
             conditionType={conditionalOperationType}
             filters={Array.isArray(filter) ? filter : filter.meta?.params}
             timeRangeForSuggestionsOverride={timeRangeForSuggestionsOverride}
             reverseBackground={!reverseBackground}
-            isParrentOrFilter={isOrFilter(filter)}
+            renderedLevel={renderedLevel + 1}
           />
         </div>
       ) : (
-        <div
-          className={cx({
-            [borderPadding]: pathInArray.length === 2 && isParrentOrFilter ? false : !isRootLevel,
-          })}
+        <EuiDroppable
+          droppableId={path}
+          spacing="none"
+          isCombineEnabled={!disableOr || !hideOr}
+          className={cx({ [cursorAddStyles]: dropTarget === path })}
+          isDropDisabled={disableAnd}
         >
-          <EuiDroppable
-            droppableId={path}
-            spacing="none"
-            isCombineEnabled={!disableOr || !hideOr}
-            className={cx({ [cursorAdd]: dropTarget === path })}
-            isDropDisabled={disableAnd}
+          <EuiDraggable
+            spacing="s"
+            key={JSON.stringify(filter)}
+            index={index}
+            draggableId={`${path}`}
+            customDragHandle={true}
+            hasInteractiveChildren={true}
           >
-            <EuiDraggable
-              spacing="s"
-              key={JSON.stringify(filter)}
-              index={index}
-              draggableId={`${path}`}
-              customDragHandle={true}
-              hasInteractiveChildren={true}
-            >
-              {(provided) => (
-                <EuiFlexGroup
-                  gutterSize="s"
-                  responsive={false}
-                  alignItems="center"
-                  justifyContent="center"
-                  className={cx({ [cursorOr]: dropTarget === path && !hideOr })}
-                >
-                  <EuiFlexItem>
-                    <EuiPanel color={color} paddingSize={'none'} hasShadow={false}>
-                      <EuiFlexGroup
-                        gutterSize="s"
-                        responsive={false}
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <EuiFlexItem grow={false} {...provided.dragHandleProps}>
-                          <EuiIcon type="grab" size="s" className={indentStyles} />
-                        </EuiFlexItem>
-                        <EuiFlexItem grow={10}>
-                          <EuiFlexGroup gutterSize="s" alignItems="center" justifyContent="center">
-                            <EuiFlexItem grow={4}>
-                              <EuiFormRow fullWidth>
-                                <FieldInput
-                                  field={field}
-                                  dataView={dataView}
-                                  onHandleField={onHandleField}
-                                />
-                              </EuiFormRow>
-                            </EuiFlexItem>
-                            <EuiFlexItem grow={2}>
-                              <EuiFormRow fullWidth>
-                                <OperatorInput
-                                  field={field}
-                                  operator={operator}
-                                  params={params}
-                                  onHandleOperator={onHandleOperator}
-                                />
-                              </EuiFormRow>
-                            </EuiFlexItem>
-                            <EuiFlexItem grow={4}>
-                              <EuiFormRow fullWidth>
-                                <ParamsEditor
-                                  dataView={dataView}
-                                  field={field}
-                                  operator={operator}
-                                  params={params}
-                                  onHandleParamsChange={onHandleParamsChange}
-                                  onHandleParamsUpdate={onHandleParamsUpdate}
-                                  timeRangeForSuggestionsOverride={timeRangeForSuggestionsOverride}
-                                />
-                              </EuiFormRow>
-                            </EuiFlexItem>
-                          </EuiFlexGroup>
-                        </EuiFlexItem>
-                        <EuiFlexItem grow={1}>
-                          <EuiFlexGroup
-                            responsive={false}
-                            justifyContent="center"
-                            alignItems="flexStart"
-                            gutterSize="s"
-                          >
+            {(provided) => (
+              <EuiFlexGroup
+                gutterSize="s"
+                responsive={false}
+                alignItems="center"
+                justifyContent="center"
+                className={cx({
+                  [cursorOrStyles]: dropTarget === path && !hideOr,
+                })}
+              >
+                <EuiFlexItem>
+                  <EuiPanel color={color} paddingSize={'none'} hasShadow={false}>
+                    <EuiFlexGroup
+                      gutterSize="s"
+                      responsive={false}
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <EuiFlexItem grow={false} {...provided.dragHandleProps}>
+                        <EuiIcon type="grab" size="s" className={grabIconStyles} />
+                      </EuiFlexItem>
+                      <EuiFlexItem grow={10}>
+                        <EuiFlexGroup gutterSize="s" alignItems="center" justifyContent="center">
+                          <EuiFlexItem grow={4}>
+                            <EuiFormRow fullWidth>
+                              <FieldInput
+                                field={field}
+                                dataView={dataView}
+                                onHandleField={onHandleField}
+                              />
+                            </EuiFormRow>
+                          </EuiFlexItem>
+                          <EuiFlexItem grow={2}>
+                            <EuiFormRow fullWidth>
+                              <OperatorInput
+                                field={field}
+                                operator={operator}
+                                params={params}
+                                onHandleOperator={onHandleOperator}
+                              />
+                            </EuiFormRow>
+                          </EuiFlexItem>
+                          <EuiFlexItem grow={4}>
+                            <EuiFormRow fullWidth>
+                              <ParamsEditor
+                                dataView={dataView}
+                                field={field}
+                                operator={operator}
+                                params={params}
+                                onHandleParamsChange={onHandleParamsChange}
+                                onHandleParamsUpdate={onHandleParamsUpdate}
+                                timeRangeForSuggestionsOverride={timeRangeForSuggestionsOverride}
+                              />
+                            </EuiFormRow>
+                          </EuiFlexItem>
+                        </EuiFlexGroup>
+                      </EuiFlexItem>
+                      <EuiFlexItem grow={1}>
+                        <EuiFlexGroup
+                          responsive={false}
+                          justifyContent="center"
+                          alignItems="flexStart"
+                          gutterSize="s"
+                        >
+                          <EuiFlexItem grow={false}>
+                            <EuiButtonIcon
+                              onClick={onRemoveFilter}
+                              iconType="trash"
+                              isDisabled={disableRemove}
+                              size="s"
+                              color="danger"
+                              aria-label={i18n.translate(
+                                'unifiedSearch.filter.filtersBuilder.deleteFilterGroupButttonIcon',
+                                {
+                                  defaultMessage: 'Delete filter group',
+                                }
+                              )}
+                            />
+                          </EuiFlexItem>
+                          {!hideOr ? (
                             <EuiFlexItem grow={false}>
                               <EuiButtonIcon
-                                onClick={onRemoveFilter}
-                                iconType="trash"
-                                isDisabled={disableRemove}
+                                onClick={onOrButtonClick}
+                                isDisabled={disableOr}
+                                iconType="returnKey"
                                 size="s"
-                                color="danger"
                                 aria-label={i18n.translate(
-                                  'unifiedSearch.filter.filtersBuilder.deleteFilterGroupButttonIcon',
+                                  'unifiedSearch.filter.filtersBuilder.addOrFilterGroupButttonIcon',
                                   {
-                                    defaultMessage: 'Delete filter group',
+                                    defaultMessage: 'Add filter group with OR',
                                   }
                                 )}
                               />
                             </EuiFlexItem>
-                            {!hideOr ? (
-                              <EuiFlexItem grow={false}>
-                                <EuiButtonIcon
-                                  onClick={onOrButtonClick}
-                                  isDisabled={disableOr}
-                                  iconType="returnKey"
-                                  size="s"
-                                  aria-label={i18n.translate(
-                                    'unifiedSearch.filter.filtersBuilder.addOrFilterGroupButttonIcon',
-                                    {
-                                      defaultMessage: 'Add filter group with OR',
-                                    }
-                                  )}
-                                />
-                              </EuiFlexItem>
-                            ) : null}
-                            <EuiFlexItem grow={false}>
-                              <EuiButtonIcon
-                                display="base"
-                                onClick={onAddButtonClick}
-                                isDisabled={disableAnd}
-                                iconType="plus"
-                                size="s"
-                                aria-label={i18n.translate(
-                                  'unifiedSearch.filter.filtersBuilder.addAndFilterGroupButttonIcon',
-                                  {
-                                    defaultMessage: 'Add filter group with AND',
-                                  }
-                                )}
-                              />
-                            </EuiFlexItem>
-                          </EuiFlexGroup>
-                        </EuiFlexItem>
-                      </EuiFlexGroup>
-                    </EuiPanel>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-              )}
-            </EuiDraggable>
-          </EuiDroppable>
-        </div>
+                          ) : null}
+                          <EuiFlexItem grow={false}>
+                            <EuiButtonIcon
+                              display="base"
+                              onClick={onAddButtonClick}
+                              isDisabled={disableAnd}
+                              iconType="plus"
+                              size="s"
+                              aria-label={i18n.translate(
+                                'unifiedSearch.filter.filtersBuilder.addAndFilterGroupButttonIcon',
+                                {
+                                  defaultMessage: 'Add filter group with AND',
+                                }
+                              )}
+                            />
+                          </EuiFlexItem>
+                        </EuiFlexGroup>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  </EuiPanel>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            )}
+          </EuiDraggable>
+        </EuiDroppable>
       )}
-    </>
+    </div>
   );
 }
