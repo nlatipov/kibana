@@ -98,6 +98,7 @@ function FiltersBuilder({
           conditionType={rootLevelConditionType}
           path={''}
           timeRangeForSuggestionsOverride={timeRangeForSuggestionsOverride}
+          isRootLevel={true}
         />
       </EuiDragDropContext>
     </FiltersBuilderContextType.Provider>

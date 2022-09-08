@@ -18,10 +18,10 @@ import {
   useEuiBackgroundColor,
   useEuiPaddingSize,
 } from '@elastic/eui';
-import { Filter, isFilter } from '@kbn/es-query';
+import { Filter } from '@kbn/es-query';
 import { cx, css } from '@emotion/css';
 import type { Path } from './filters_builder_types';
-import { ConditionTypes } from '../utils';
+import { ConditionTypes, isOrFilter } from '../utils';
 import { FilterItem } from './filters_builder_filter_item';
 import { FiltersBuilderContextType } from './filters_builder_context';
 import { getPathInArray } from './filters_builder_utils';
@@ -32,18 +32,12 @@ export interface FilterGroupProps {
   path: Path;
   timeRangeForSuggestionsOverride?: boolean;
   reverseBackground?: boolean;
+  isParrentOrFilter?: boolean;
+  isRootLevel?: boolean;
 }
 
 const boderPadding = css`
   padding: 16px;
-`;
-
-const borderMargin = css`
-  margin: 0px 16px;
-`;
-
-const borderPadding = css`
-  padding: 0px 14px;
 `;
 
 const panelPadding = css`
@@ -89,6 +83,7 @@ export const FilterGroup = ({
   path,
   timeRangeForSuggestionsOverride,
   reverseBackground = false,
+  isRootLevel = false,
 }: FilterGroupProps) => {
   const {
     globalParams: { maxDepth, hideOr },
@@ -121,36 +116,35 @@ export const FilterGroup = ({
       })}
     >
       {filters.map((filter, index, acc) => (
-        <EuiFlexGroup direction="column" gutterSize="none">
-          <EuiFlexItem
-            className={cx({
-              [borderMargin]: path !== '' && Array.isArray(filter),
-              [borderPadding]: path !== '' && isFilter(filter),
-            })}
-          >
-            <FilterItem
-              filter={filter}
-              path={`${path}${path ? '.' : ''}${index}`}
-              timeRangeForSuggestionsOverride={timeRangeForSuggestionsOverride}
-              reverseBackground={reverseBackground}
-              disableOr={orDisabled}
-              disableAnd={andDisabled}
-              disableRemove={removeDisabled}
-              color={color}
-              index={index}
-            />
-          </EuiFlexItem>
-
-          {conditionType && index + 1 < acc.length ? (
+        <>
+          <EuiFlexGroup direction="column" gutterSize="none">
             <EuiFlexItem>
-              {conditionType === ConditionTypes.OR ? (
-                <OrDelimiter isRevert={reverseBackground} />
-              ) : (
-                <EuiSpacer size="s" />
-              )}
+              <FilterItem
+                filter={filter}
+                path={`${path}${path ? '.' : ''}${index}`}
+                timeRangeForSuggestionsOverride={timeRangeForSuggestionsOverride}
+                reverseBackground={reverseBackground}
+                disableOr={orDisabled}
+                disableAnd={andDisabled}
+                disableRemove={removeDisabled}
+                color={color}
+                index={index}
+                isParrentOrFilter={isOrFilter(filter)}
+                isRootLevel={isRootLevel}
+              />
             </EuiFlexItem>
-          ) : null}
-        </EuiFlexGroup>
+
+            {conditionType && index + 1 < acc.length ? (
+              <EuiFlexItem>
+                {conditionType === ConditionTypes.OR ? (
+                  <OrDelimiter isRevert={reverseBackground} />
+                ) : (
+                  <EuiSpacer size="s" />
+                )}
+              </EuiFlexItem>
+            ) : null}
+          </EuiFlexGroup>
+        </>
       ))}
     </EuiPanel>
   );
