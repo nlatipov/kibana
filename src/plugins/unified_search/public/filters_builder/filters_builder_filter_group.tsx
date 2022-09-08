@@ -20,7 +20,7 @@ import {
 import { Filter } from '@kbn/es-query';
 import { css } from '@emotion/css';
 import type { Path } from './filters_builder_types';
-import { ConditionTypes } from '../utils';
+import { ConditionTypes, getConditionalOperationType } from '../utils';
 import { FilterItem } from './filters_builder_filter_item';
 import { FiltersBuilderContextType } from './filters_builder_context';
 import { getPathInArray } from './filters_builder_utils';
@@ -96,7 +96,8 @@ export const FilterGroup = ({
   const orDisabled = hideOr || (isDepthReached && conditionType === ConditionTypes.AND);
   const andDisabled = isDepthReached && conditionType === ConditionTypes.OR;
   const removeDisabled = pathInArray.length <= 1 && filters.length === 1;
-  const shouldNormalizeFirstLevel = !path && filters.length === 1;
+  const shouldNormalizeFirstLevel =
+    !path && filters.length === 1 && getConditionalOperationType(filters[0]);
 
   if (shouldNormalizeFirstLevel) {
     reverseBackground = true;
