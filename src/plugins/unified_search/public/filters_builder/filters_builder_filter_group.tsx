@@ -44,6 +44,7 @@ const Delimiter = ({
   conditionType: ConditionTypes;
 }) => {
   const xsPadding = useEuiPaddingSize('xs');
+  const mPadding = useEuiPaddingSize('m');
   const backgroundColor = useEuiBackgroundColor(color);
 
   const delimiterStyles = useMemo(
@@ -54,12 +55,12 @@ const Delimiter = ({
         position: absolute;
         display: block;
         padding: ${xsPadding};
-        top: 0px;
-        left: 12px;
+        top: 0;
+        left: ${mPadding};
         background: ${backgroundColor};
       }
     `,
-    [backgroundColor, xsPadding]
+    [backgroundColor, mPadding, xsPadding]
   );
 
   return (
