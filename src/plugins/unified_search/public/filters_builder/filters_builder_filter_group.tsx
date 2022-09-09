@@ -53,7 +53,7 @@ const Delimiter = ({
       .filter-builder__delimiter_text {
         position: absolute;
         display: block;
-        padding: calc(${xsPadding} / 2);
+        padding: ${xsPadding};
         top: 0px;
         left: 12px;
         background: ${backgroundColor};
@@ -138,7 +138,8 @@ export const FilterGroup = ({
       paddingSize="none"
       hasBorder
       className={cx({
-        'filter-builder__panel': renderedLevel > 0,
+        'filter-builder__panel': true,
+        'filter-builder__panel-nested': renderedLevel > 0,
       })}
     >
       {renderedFilters}

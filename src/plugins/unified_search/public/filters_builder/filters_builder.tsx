@@ -38,26 +38,25 @@ function FiltersBuilder({
 }: FiltersBuilderProps) {
   const [state, dispatch] = useReducer(FiltersBuilderReducer, { filters });
   const [dropTarget, setDropTarget] = useState('');
-  const euiPaddingSize = useEuiPaddingSize('s');
+  const mPaddingSize = useEuiPaddingSize('m');
+  const xsPaddingSize = useEuiPaddingSize('xs');
 
   const filtersBuilderStyles = useMemo(
     () => css`
       .filter-builder__panel {
-        margin: ${euiPaddingSize} 0;
-        padding: calc(${euiPaddingSize}*2) 0;
+        &.filter-builder__panel-nested {
+          margin: ${xsPaddingSize} 0;
+          padding: ${mPaddingSize} 0;
+        }
       }
 
       .filter-builder__item {
-        padding: 0 calc(${euiPaddingSize}*2);
-        &:last-child {
-          padding-bottom: 0;
-        }
-        &:first-child {
-          padding-bottom: 0;
+        &.filter-builder__item-nested {
+          padding: 0 ${mPaddingSize};
         }
       }
     `,
-    [euiPaddingSize]
+    [mPaddingSize, xsPaddingSize]
   );
 
   useEffect(() => {

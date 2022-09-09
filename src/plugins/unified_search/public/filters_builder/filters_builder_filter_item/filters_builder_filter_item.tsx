@@ -170,7 +170,8 @@ export function FilterItem({
   return (
     <div
       className={cx({
-        'filter-builder__item': renderedLevel > 0,
+        'filter-builder__item': true,
+        'filter-builder__item-nested': renderedLevel > 0,
       })}
     >
       {conditionalOperationType ? (
@@ -209,7 +210,11 @@ export function FilterItem({
               >
                 <EuiFlexItem>
                   <EuiPanel color={color} paddingSize={'none'} hasShadow={false}>
-                    <EuiFlexGroup responsive={false} alignItems="center" justifyContent="center">
+                    <EuiFlexGroup
+                      responsive={false}
+                      alignItems="baseline"
+                      justifyContent="flexStart"
+                    >
                       <EuiFlexItem grow={false} {...provided.dragHandleProps}>
                         <EuiIcon type="grab" size="s" className={grabIconStyles} />
                       </EuiFlexItem>
@@ -250,12 +255,7 @@ export function FilterItem({
                         </EuiFlexGroup>
                       </EuiFlexItem>
                       <EuiFlexItem grow={1}>
-                        <EuiFlexGroup
-                          responsive={false}
-                          justifyContent="center"
-                          alignItems="flexStart"
-                          gutterSize="s"
-                        >
+                        <EuiFlexGroup justifyContent="flexEnd" alignItems="flexEnd" gutterSize="s">
                           <EuiFlexItem grow={false}>
                             <EuiButtonIcon
                               onClick={onRemoveFilter}
