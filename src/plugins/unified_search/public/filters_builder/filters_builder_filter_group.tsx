@@ -53,7 +53,7 @@ const Delimiter = ({
       .filter-builder__delimiter_text {
         position: absolute;
         display: block;
-        padding: ${xsPadding};
+        padding: calc(${xsPadding} / 2);
         top: 0px;
         left: 12px;
         background: ${backgroundColor};
@@ -104,31 +104,29 @@ export const FilterGroup = ({
   const color = reverseBackground ? 'plain' : 'subdued';
 
   const renderedFilters = filters.map((filter, index, acc) => (
-    <>
-      <EuiFlexGroup direction="column" gutterSize="xs">
-        <EuiFlexItem>
-          <FilterItem
-            filter={filter}
-            path={`${path}${path ? '.' : ''}${index}`}
-            reverseBackground={reverseBackground}
-            disableOr={orDisabled}
-            disableAnd={andDisabled}
-            disableRemove={removeDisabled}
-            color={color}
-            index={index}
-            renderedLevel={renderedLevel}
-          />
-        </EuiFlexItem>
+    <EuiFlexGroup direction="column" gutterSize="xs">
+      <EuiFlexItem>
+        <FilterItem
+          filter={filter}
+          path={`${path}${path ? '.' : ''}${index}`}
+          reverseBackground={reverseBackground}
+          disableOr={orDisabled}
+          disableAnd={andDisabled}
+          disableRemove={removeDisabled}
+          color={color}
+          index={index}
+          renderedLevel={renderedLevel}
+        />
+      </EuiFlexItem>
 
-        {conditionType && index + 1 < acc.length ? (
-          <EuiFlexItem>
-            {conditionType === ConditionTypes.OR && (
-              <Delimiter color={color} conditionType={conditionType} />
-            )}
-          </EuiFlexItem>
-        ) : null}
-      </EuiFlexGroup>
-    </>
+      {conditionType && index + 1 < acc.length ? (
+        <EuiFlexItem>
+          {conditionType === ConditionTypes.OR && (
+            <Delimiter color={color} conditionType={conditionType} />
+          )}
+        </EuiFlexItem>
+      ) : null}
+    </EuiFlexGroup>
   ));
 
   return shouldNormalizeFirstLevel ? (

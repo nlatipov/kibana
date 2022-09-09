@@ -44,11 +44,11 @@ function FiltersBuilder({
     () => css`
       .filter-builder__panel {
         margin: ${euiPaddingSize} 0;
-        padding: ${euiPaddingSize} 0;
+        padding: calc(${euiPaddingSize}*2) 0;
       }
 
       .filter-builder__item {
-        padding: 0 ${euiPaddingSize};
+        padding: 0 calc(${euiPaddingSize}*2);
         &:last-child {
           padding-bottom: 0;
         }
