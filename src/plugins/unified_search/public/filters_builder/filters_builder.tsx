@@ -113,15 +113,11 @@ function FiltersBuilder({
           dataView,
           dispatch,
           dropTarget,
+          timeRangeForSuggestionsOverride,
         }}
       >
         <EuiDragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragActive}>
-          <FilterGroup
-            filters={state.filters}
-            conditionType={rootLevelConditionType}
-            path={''}
-            timeRangeForSuggestionsOverride={timeRangeForSuggestionsOverride}
-          />
+          <FilterGroup filters={state.filters} conditionType={rootLevelConditionType} path={''} />
         </EuiDragDropContext>
       </FiltersBuilderContextType.Provider>
     </div>

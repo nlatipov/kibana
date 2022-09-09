@@ -39,7 +39,6 @@ import { Operator } from '../../filter_bar/filter_editor';
 export interface FilterItemProps {
   path: Path;
   filter: Filter;
-  timeRangeForSuggestionsOverride?: boolean;
   disableOr: boolean;
   disableAnd: boolean;
   disableRemove: boolean;
@@ -62,7 +61,6 @@ const cursorOrStyles = css`
 export function FilterItem({
   filter,
   path,
-  timeRangeForSuggestionsOverride,
   reverseBackground,
   disableOr,
   disableAnd,
@@ -76,6 +74,7 @@ export function FilterItem({
     dataView,
     dropTarget,
     globalParams: { hideOr },
+    timeRangeForSuggestionsOverride,
   } = useContext(FiltersBuilderContextType);
   const conditionalOperationType = getConditionalOperationType(filter);
   const { euiTheme } = useEuiTheme();
@@ -179,7 +178,6 @@ export function FilterItem({
           path={path}
           conditionType={conditionalOperationType}
           filters={Array.isArray(filter) ? filter : filter.meta?.params}
-          timeRangeForSuggestionsOverride={timeRangeForSuggestionsOverride}
           reverseBackground={!reverseBackground}
           renderedLevel={renderedLevel + 1}
         />

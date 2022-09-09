@@ -29,8 +29,6 @@ export interface FilterGroupProps {
   filters: Filter[];
   conditionType: ConditionTypes;
   path: Path;
-  // todo: move to context
-  timeRangeForSuggestionsOverride?: boolean;
 
   /** @internal used for recursive rendering **/
   renderedLevel?: number;
@@ -83,7 +81,6 @@ export const FilterGroup = ({
   filters,
   conditionType,
   path,
-  timeRangeForSuggestionsOverride,
   reverseBackground = false,
   renderedLevel = 0,
 }: FilterGroupProps) => {
@@ -113,7 +110,6 @@ export const FilterGroup = ({
           <FilterItem
             filter={filter}
             path={`${path}${path ? '.' : ''}${index}`}
-            timeRangeForSuggestionsOverride={timeRangeForSuggestionsOverride}
             reverseBackground={reverseBackground}
             disableOr={orDisabled}
             disableAnd={andDisabled}
