@@ -123,9 +123,7 @@ export const FilterGroup = ({
 
       {booleanRelation && index + 1 < acc.length ? (
         <EuiFlexItem>
-          {booleanRelation === BooleanRelation.OR && (
-            <Delimiter color={color} booleanRelation={booleanRelation} />
-          )}
+          <Delimiter color={color} booleanRelation={booleanRelation} />
         </EuiFlexItem>
       ) : null}
     </EuiFlexGroup>

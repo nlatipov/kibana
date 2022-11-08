@@ -14,6 +14,7 @@ import {
   EuiFlexItem,
   EuiForm,
   EuiFormRow,
+  EuiIcon,
   EuiPopoverFooter,
   EuiPopoverTitle,
   EuiSpacer,
@@ -48,6 +49,7 @@ import {
   isFilterValid,
 } from './lib/filter_editor_utils';
 import { FiltersBuilder } from '../../filters_builder';
+import { FilterBadgeGroup } from '../../filter_badge';
 
 /** The default max-height of the Add/Edit Filter popover used to show "+n More" filters (e.g. `+5 More`) */
 export const DEFAULT_MAX_HEIGHT = '227px';
@@ -263,16 +265,38 @@ class FilterEditorUI extends Component<FilterEditorProps, State> {
     const { selectedIndexPattern, filters } = this.state;
 
     return (
-      <div role="region" aria-label="" className={cx(filtersBuilderMaxHeight, 'eui-yScroll')}>
-        <FiltersBuilder
+      <>
+        <div role="region" aria-label="" className={cx(filtersBuilderMaxHeight, 'eui-yScroll')}>
+          <FiltersBuilder
+            filters={filters}
+            timeRangeForSuggestionsOverride={this.props.timeRangeForSuggestionsOverride}
+            dataView={selectedIndexPattern!}
+            onChange={(filtersBuilder: Filter[]) => {
+              this.setState({ filters: filtersBuilder });
+            }}
+          />
+        </div>
+        <EuiSpacer size="m" />
+
+        <EuiFlexGroup alignItems="center" gutterSize="xs" responsive={false}>
+          <EuiFlexItem grow={false}>
+            <EuiIcon type="searchProfilerApp" />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            {i18n.translate('unifiedSearch.filter.filterBar.preview', {
+              defaultMessage: 'Preview',
+            })}
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        <EuiSpacer size="s" />
+
+        <FilterBadgeGroup
           filters={filters}
-          timeRangeForSuggestionsOverride={this.props.timeRangeForSuggestionsOverride}
-          dataView={selectedIndexPattern!}
-          onChange={(filtersBuilder: Filter[]) => {
-            this.setState({ filters: filtersBuilder });
-          }}
+          isRootLevel={true}
+          dataViews={this.props.indexPatterns}
         />
-      </div>
+      </>
     );
   }
 
