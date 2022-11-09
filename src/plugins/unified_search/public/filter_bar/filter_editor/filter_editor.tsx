@@ -280,7 +280,7 @@ class FilterEditorUI extends Component<FilterEditorProps, State> {
 
         <EuiFlexGroup alignItems="center" gutterSize="xs" responsive={false}>
           <EuiFlexItem grow={false}>
-            <EuiIcon type="searchProfilerApp" />
+            <EuiIcon type="inspect" />
           </EuiFlexItem>
           <EuiFlexItem>
             {i18n.translate('unifiedSearch.filter.filterBar.preview', {
